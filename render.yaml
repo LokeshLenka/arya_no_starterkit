@@ -1,0 +1,56 @@
+services:
+  - type: web
+    name: example-app1
+    runtime: docker
+    dockerfile: Dockerfile
+    branch: main
+    healthCheckPath: /up
+    envVars:
+      - key: APP_KEY
+        sync: false
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_LEVEL
+        value: error
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromService:
+          name: example-app1-database
+          type: pserv
+          property: hostname
+      - key: DB_PORT
+        fromService:
+          name: example-app1-database
+          type: pserv
+          property: port
+      - key: DB_DATABASE
+        fromService:
+          name: example-app1-database
+          type: pserv
+          property: database
+      - key: DB_USERNAME
+        fromService:
+          name: example-app1-database
+          type: pserv
+          property: username
+      - key: DB_PASSWORD
+        fromService:
+          name: example-app1-database
+          type: pserv
+          property: password
+
+  - type: pserv
+    name: example-app1-database
+    image: postgres
+    env: production
+    plan: starter
+    envVars:
+      - key: POSTGRES_DB
+        value: example_app1_database_v7s9
+      - key: POSTGRES_USER
+        generateValue: true
+      - key: POSTGRES_PASSWORD
+        generateValue: true
